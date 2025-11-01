@@ -42,4 +42,4 @@ class Bout(models.Model):
     is_title_fight = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"{self.fighter_a} vs {self.fighter_b}"
+        return f"{self.fighter_a} vs {self.fighter_b}" 
