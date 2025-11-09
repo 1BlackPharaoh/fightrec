@@ -1,0 +1,62 @@
+{% extends 'fighters/base.html' %}
+
+{% block content %}
+<div class="hero-section text-center py-5 mb-5 rounded">
+    <h1 class="display-4 fw-bold">🇳🇬 FightRec Nigeria</h1>
+    <p class="lead">The Premier Database for Nigerian Boxing Records</p>
+    <p class="text-muted">Tracking {{ total_fighters }} fighters and counting</p>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h3>🥊 Fighters</h3>
+                <p>Browse our comprehensive database of Nigerian boxers</p>
+                <a href="{% url 'fighter_list' %}" class="btn btn-primary">View All Fighters</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h3>📊 Rankings</h3>
+                <p>See current rankings by weight class</p>
+                <a href="{% url 'rankings' %}" class="btn btn-success">View Rankings</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h3>➕ Contribute</h3>
+                <p>Help expand our database</p>
+                <a href="/admin/" class="btn btn-warning">Add Data</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="mb-4">Featured Nigerian Fighters</h2>
+<div class="row">
+    {% for fighter in featured_fighters %}
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card fighter-card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ fighter.name }}</h5>
+                <p class="card-text">
+                    <strong>Record:</strong> {{ fighter.record }}<br>
+                    <strong>State:</strong> {{ fighter.state_of_origin }}<br>
+                    <strong>Stance:</strong> {{ fighter.stance }}
+                </p>
+                <a href="{% url 'fighter_detail' fighter.id %}" class="btn btn-outline-primary">View Profile</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No fighters in database yet. <a href="/admin/">Add some fighters</a></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

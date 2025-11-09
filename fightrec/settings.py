@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fighters',
     'events',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -82,3 +83,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Media files (Uploaded images)
+import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create media directory if it doesn't exist
+if not os.path.exists(MEDIA_ROOT):
+    os.makedirs(os.path.join(MEDIA_ROOT, 'fighters/photos'))
+    # Custom user model
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# Login/Logout URLs
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'

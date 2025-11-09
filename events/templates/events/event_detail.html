@@ -1,0 +1,110 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}{{ event.name }} - FightRec Nigeria{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h2>{{ event.name }}</h2>
+                <p class="lead">
+                    <strong>Date:</strong> {{ event.date }}<br>
+                    <strong>Location:</strong> {{ event.location }}<br>
+                    {% if event.promoter %}
+                    <strong>Promoter:</strong> {{ event.promoter }}
+                    {% endif %}
+                </p>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="btn-group">
+                <a href="{% url 'create_bout' event.id %}" class="btn btn-success btn-sm">➕ Add Bout</a>
+                <a href="{% url 'edit_event' event.id %}" class="btn btn-warning btn-sm">✏️ Edit</a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Event stats -->
+        <div class="row mt-3">
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-body text-center py-2">
+                        <h5 class="mb-0">{{ total_bouts }}</h5>
+                        <small>Total Bouts</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-body text-center py-2">
+                        <h5 class="mb-0">{{ completed_bouts }}</h5>
+                        <small>Completed</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'event_list' %}">Events</a></li>
+        <li class="breadcrumb-item active">{{ event.name }}</li>
+    </ol>
+</nav>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h2>{{ event.name }}</h2>
+        <p class="lead">
+            <strong>Date:</strong> {{ event.date }}<br>
+            <strong>Location:</strong> {{ event.location }}<br>
+            {% if event.promoter %}
+            <strong>Promoter:</strong> {{ event.promoter }}
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<h3 class="mb-3">Fight Card</h3>
+{% for bout in bouts %}
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5>
+                    <a href="{% url 'fighter_detail' bout.fighter_a.id %}">{{ bout.fighter_a.name }}</a>
+                    vs
+                    <a href="{% url 'fighter_detail' bout.fighter_b.id %}">{{ bout.fighter_b.name }}</a>
+                </h5>
+                <p class="mb-1">
+                    <span class="badge bg-secondary">{{ bout.weight_class.name }}</span>
+                    <span class="badge bg-info">{{ bout.scheduled_rounds }} rounds</span>
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                {% if bout.result_type %}
+                <div class="result-box">
+                    <strong>Result:</strong> {{ bout.get_result_type_display }}<br>
+                    {% if bout.winning_fighter %}
+                    <span class="text-success">Winner: {{ bout.winning_fighter.name }}</span>
+                    {% elif bout.is_draw %}
+                    <span class="text-warning">Draw</span>
+                    {% endif %}
+                    {% if bout.round_ended %}
+                    <small class="text-muted">Round {{ bout.round_ended }}</small>
+                    {% endif %}
+                </div>
+                {% else %}
+                <span class="text-muted">Scheduled</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="alert alert-warning">
+    No bouts scheduled for this event.
+</div>
+{% endfor %}
+{% endblock %}

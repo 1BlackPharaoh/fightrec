@@ -1,0 +1,80 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}Fighters - FightRec Nigeria{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Nigerian Boxers</h1>
+
+<!-- Search and Filter Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" placeholder="Search by name or state..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-4">
+                <select name="state" class="form-select">
+                    <option value="">All States</option>
+                    {% for state in states %}
+                    <option value="{{ state }}" {% if selected_state == state %}selected{% endif %}>{{ state }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Fighters Grid -->
+<div class="row">
+    {% for fighter in fighters %}
+    <div class="col-lg-6 mb-3">
+        <div class="card fighter-card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-3">
+                {% if fighter.photo %}
+                <img src="{{ fighter.photo.url }}" alt="{{ fighter.name }}" class="img-fluid rounded" style="height: 80px; width: 80px; object-fit: cover;">
+                {% else %}
+                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 80px; width: 80px;">
+                    <i class="fas fa-user text-muted"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-6">
+                <h5 class="card-title">{{ fighter.name }}</h5>
+                <p class="card-text mb-1">
+                    <span class="badge bg-success">{{ fighter.record }}</span>
+                    {% if fighter.kos > 10 %}<span class="badge bg-danger">KO Artist</span>{% endif %}
+                    {% if fighter.total_wins > 20 %}<span class="badge bg-warning">Veteran</span>{% endif %}
+                </p>
+                <p class="card-text text-muted mb-1">
+                    <small>
+                        {{ fighter.state_of_origin }} 
+                        {% if fighter.weight_class %}• {{ fighter.weight_class.name }}{% endif %}
+                        • {{ fighter.stance }}
+                    </small>
+                </p>
+            </div>
+            <div class="col-3 text-end">
+                <a href="{% url 'fighter_detail' fighter.id %}" class="btn btn-sm btn-outline-primary">View Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            {% if search_query or selected_state %}
+            No fighters found matching your search. <a href="{% url 'fighter_list' %}">Clear search</a>
+            {% else %}
+            No fighters in database. <a href="/admin/fighters/fighter/add/">Add the first fighter</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

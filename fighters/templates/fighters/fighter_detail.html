@@ -1,0 +1,147 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}{{ fighter.name }} - FightRec Nigeria{% endblock %}
+
+{% block content %}
+{% with total_fights=fighter.total_wins|add:fighter.total_losses|add:fighter.total_draws %}
+<div class="row">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'fighter_list' %}">Fighters</a></li>
+                <li class="breadcrumb-item active">{{ fighter.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">{{ fighter.name }}</h2>
+                <span class="badge bg-primary fs-6">{{ fighter.record }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Record:</strong> <span class="badge bg-success fs-6">{{ fighter.record }}</span></p>
+                        <p><strong>State of Origin:</strong> {{ fighter.state_of_origin }}</p>
+                        <p><strong>Nationality:</strong> {{ fighter.nationality }}</p>
+                        <p><strong>Stance:</strong> {{ fighter.stance }}</p>
+                        {% if fighter.weight_class %}
+                        <p><strong>Weight Class:</strong> {{ fighter.weight_class.name }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Wins:</strong> {{ fighter.total_wins }}</p>
+                        <p><strong>Losses:</strong> {{ fighter.total_losses }}</p>
+                        <p><strong>Draws:</strong> {{ fighter.total_draws }}</p>
+                        <p><strong>KO Wins:</strong> {{ fighter.kos }} ({{ fighter.knockout_ratio|default:"0"|floatformat:1 }})</p>
+                        {% if fighter.birth_date %}
+                        <p><strong>Birth Date:</strong> {{ fighter.birth_date }}</p>
+                        {% endif %}
+                        {% if fighter.height %}
+                        <p><strong>Height:</strong> {{ fighter.height }} cm</p>
+                        {% endif %}
+                        {% if fighter.reach %}
+                        <p><strong>Reach:</strong> {{ fighter.reach }} cm</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if fighter.biography %}
+                <hr>
+                <h5>Biography & Career Highlights</h5>
+                <div class="bg-light p-3 rounded">
+                    {{ fighter.biography|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Fighter Photo -->
+        {% if fighter.photo %}
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <img src="{{ fighter.photo.url }}" alt="{{ fighter.name }}" class="img-fluid rounded" style="max-height: 300px;">
+            </div>
+        </div>
+        {% else %}
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <div class="text-muted mb-3">
+                    <i class="fas fa-user" style="font-size: 100px;"></i>
+                </div>
+                <p class="text-muted">No photo available</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Quick Stats -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Career Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <div class="display-6 text-primary">{{ total_fights }}</div>
+                    <p class="text-muted">Total Fights</p>
+                </div>
+                
+                {% if fighter.total_wins > 0 %}
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>Wins:</span>
+                        <span>{{ fighter.total_wins }}</span>
+                    </div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-success" style="width: {% widthratio fighter.total_wins total_fights 100 %}%"></div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if fighter.total_losses > 0 %}
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>Losses:</span>
+                        <span>{{ fighter.total_losses }}</span>
+                    </div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-danger" style="width: {% widthratio fighter.total_losses total_fights 100 %}%"></div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if fighter.kos > 0 %}
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>KO Wins:</span>
+                        <span>{{ fighter.kos }} ({{ fighter.knockout_ratio|default:"0"|floatformat:1 }})</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="text-center mt-3">
+                    <a href="/admin/fighters/fighter/{{ fighter.id }}/change/" class="btn btn-warning btn-sm">Edit in Admin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}
+
+<!-- Recent Fights Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Bouts</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Bout history will be displayed here once we add more events.</p>
+                <a href="{% url 'event_list' %}" class="btn btn-outline-primary">View All Events</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

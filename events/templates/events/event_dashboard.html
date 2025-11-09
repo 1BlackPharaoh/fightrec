@@ -1,0 +1,145 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}Events Dashboard - FightRec Nigeria{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>🎪 Events Dashboard</h1>
+            <div class="btn-group">
+                <a href="{% url 'create_event' %}" class="btn btn-primary">➕ Create New Event</a>
+                <a href="{% url 'event_list' %}" class="btn btn-outline-secondary">View All Events</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Quick Stats -->
+    <div class="col-md-3 mb-4">
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <h3>{{ total_events }}</h3>
+                <p class="mb-0">Total Events</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-center bg-success text-white">
+            <div class="card-body">
+                <h3>{{ upcoming_events_count }}</h3>
+                <p class="mb-0">Upcoming Events</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-center bg-warning text-dark">
+            <div class="card-body">
+                <h3>{{ total_bouts }}</h3>
+                <p class="mb-0">Total Bouts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-center bg-info text-white">
+            <div class="card-body">
+                <h3>{{ locations_count }}</h3>
+                <p class="mb-0">Locations</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Quick Event Creation -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">🚀 Quick Event Creation</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'create_event' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Event Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g., Lagos Boxing Championship 2024" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Event Date</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" name="location" class="form-control" placeholder="e.g., Lagos National Stadium" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Promoter (Optional)</label>
+                        <input type="text" name="promoter" class="form-control" placeholder="e.g., Nigerian Boxing Promotions">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Create Event</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Events -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📅 Recent Events</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_events %}
+                <div class="list-group list-group-flush">
+                    {% for event in recent_events %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ event.name }}</h6>
+                            <small class="text-muted">{{ event.date }} • {{ event.location }}</small>
+                        </div>
+                        <div class="btn-group">
+                            <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                            <a href="{% url 'edit_event' event.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center">No events created yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">⚡ Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <a href="{% url 'event_list' %}" class="btn btn-outline-primary w-100">
+                            📋 Browse All Events
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="{% url 'create_event' %}" class="btn btn-outline-success w-100">
+                            🎪 Create New Event
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="/admin/events/event/" class="btn btn-outline-info w-100">
+                            ⚙️ Admin Panel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

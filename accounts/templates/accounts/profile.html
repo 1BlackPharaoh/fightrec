@@ -1,0 +1,123 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}My Profile - FightRec Nigeria{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <!-- Profile Card -->
+        <div class="card">
+            <div class="card-body text-center">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" 
+                     class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                     style="width: 150px; height: 150px;">
+                    <i class="fas fa-user fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <h4>{{ user.full_name }}</h4>
+                <p class="text-muted">@{{ user.username }}</p>
+                
+                {% if user.location %}
+                <p class="mb-1">
+                    <i class="fas fa-map-marker-alt text-muted"></i>
+                    {{ user.location }}
+                </p>
+                {% endif %}
+                
+                {% if user.favorite_fighter %}
+                <p class="mb-3">
+                    <i class="fas fa-heart text-danger"></i>
+                    Favorite: 
+                    <a href="{% url 'fighter_detail' user.favorite_fighter.id %}" class="text-decoration-none">
+                        {{ user.favorite_fighter.name }}
+                    </a>
+                </p>
+                {% endif %}
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+                    <a href="{% url 'change_password' %}" class="btn btn-outline-secondary">Change Password</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Card -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title">Profile Stats</h6>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="h5 mb-0">{{ user.followers.count }}</div>
+                        <small class="text-muted">Followers</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="h5 mb-0">{{ user.following.count }}</div>
+                        <small class="text-muted">Following</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <!-- Bio Section -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">About Me</h5>
+            </div>
+            <div class="card-body">
+                {% if user.bio %}
+                <p class="card-text">{{ user.bio|linebreaks }}</p>
+                {% else %}
+                <p class="text-muted">No bio yet. <a href="{% url 'edit_profile' %}">Add one now!</a></p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Account Info -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Account Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <strong>Email:</strong><br>
+                        {{ user.email }}
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Member since:</strong><br>
+                        {{ user.date_joined|date:"F j, Y" }}
+                    </div>
+                </div>
+                {% if user.birth_date %}
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <strong>Birth Date:</strong><br>
+                        {{ user.birth_date }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Recent Activity (placeholder for future features) -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Your activity feed will appear here once you start using FightRec features.</p>
+                <div class="text-center">
+                    <a href="{% url 'fighter_list' %}" class="btn btn-outline-primary">Explore Fighters</a>
+                    <a href="{% url 'event_list' %}" class="btn btn-outline-success">View Events</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

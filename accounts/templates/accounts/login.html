@@ -1,0 +1,50 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}Login - FightRec Nigeria{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Sign In to FightRec</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Your username and password didn't match. Please try again.
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
+                    
+                    <div class="text-center">
+                        <a href="{% url 'password_reset' %}" class="text-decoration-none">Forgot your password?</a>
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="mb-0">Don't have an account? 
+                        <a href="{% url 'register' %}" class="text-decoration-none">Sign Up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

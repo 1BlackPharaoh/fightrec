@@ -1,0 +1,128 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}Advanced Search - FightRec Nigeria{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🔍 Advanced Search</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{% url 'fighter_list' %}">
+                    <div class="mb-3">
+                        <label class="form-label">Fighter Name</label>
+                        <input type="text" name="q" class="form-control" placeholder="Search by name..." value="{{ request.GET.q }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">State of Origin</label>
+                        <select name="state" class="form-select">
+                            <option value="">All States</option>
+                            {% for state in states %}
+                            <option value="{{ state }}" {% if request.GET.state == state %}selected{% endif %}>{{ state }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Weight Class</label>
+                        <select name="weight_class" class="form-select">
+                            <option value="">All Weight Classes</option>
+                            {% for wc in weight_classes %}
+                            <option value="{{ wc.id }}" {% if request.GET.weight_class == wc.id|stringformat:"i" %}selected{% endif %}>{{ wc.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Stance</label>
+                        <select name="stance" class="form-select">
+                            <option value="">Any Stance</option>
+                            <option value="Orthodox" {% if request.GET.stance == "Orthodox" %}selected{% endif %}>Orthodox</option>
+                            <option value="Southpaw" {% if request.GET.stance == "Southpaw" %}selected{% endif %}>Southpaw</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Min Wins</label>
+                            <input type="number" name="min_wins" class="form-control" value="{{ request.GET.min_wins }}" min="0">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Max Losses</label>
+                            <input type="number" name="max_losses" class="form-control" value="{{ request.GET.max_losses }}" min="0">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Search Fighters</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <h6>📈 Search Statistics</h6>
+                <p class="mb-1">Total Fighters: {{ total_fighters }}</p>
+                <p class="mb-0">Matching: {{ fighters.count }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Search Results</h2>
+            <a href="{% url 'fighter_list' %}" class="btn btn-outline-secondary">View All Fighters</a>
+        </div>
+        
+        {% if fighters %}
+        <div class="row">
+            {% for fighter in fighters %}
+            <div class="col-lg-6 mb-3">
+                <div class="card fighter-card h-100">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                {% if fighter.photo %}
+                                <img src="{{ fighter.photo.url }}" alt="{{ fighter.name }}" class="img-fluid rounded" style="height: 80px; width: 80px; object-fit: cover;">
+                                {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 80px; width: 80px;">
+                                    <i class="fas fa-user text-muted"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-6">
+                                <h5 class="card-title">{{ fighter.name }}</h5>
+                                <p class="card-text mb-1">
+                                    <span class="badge bg-success">{{ fighter.record }}</span>
+                                    {% if fighter.kos > 10 %}<span class="badge bg-danger">KO Power</span>{% endif %}
+                                </p>
+                                <p class="card-text text-muted mb-1">
+                                    <small>
+                                        {{ fighter.state_of_origin }} 
+                                        {% if fighter.weight_class %}• {{ fighter.weight_class.name }}{% endif %}
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="col-3 text-end">
+                                <a href="{% url 'fighter_detail' fighter.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="text-muted">
+                <i class="fas fa-search fa-3x mb-3"></i>
+                <h4>No fighters found</h4>
+                <p>Try adjusting your search criteria</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

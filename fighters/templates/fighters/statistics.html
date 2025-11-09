@@ -1,0 +1,137 @@
+{% extends 'fighters/base.html' %}
+
+{% block title %}Statistics - FightRec Nigeria{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">📊 FightRec Statistics</h1>
+    </div>
+</div>
+
+<!-- Overview Cards -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <h3>{{ total_fighters }}</h3>
+                <p class="mb-0">Total Fighters</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-success text-white">
+            <div class="card-body">
+                <h3>{{ total_events }}</h3>
+                <p class="mb-0">Boxing Events</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-warning text-dark">
+            <div class="card-body">
+                <h3>{{ total_bouts }}</h3>
+                <p class="mb-0">Recorded Bouts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-info text-white">
+            <div class="card-body">
+                <h3>{{ states_stats|length }}</h3>
+                <p class="mb-0">States Represented</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- States Statistics -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🏴‍☠️ Fighters by State</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Fighters</th>
+                                <th>Total Wins</th>
+                                <th>Total KOs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for state in states_stats %}
+                            <tr>
+                                <td><strong>{{ state.state_of_origin }}</strong></td>
+                                <td>{{ state.count }}</td>
+                                <td>{{ state.total_wins|default:0 }}</td>
+                                <td>{{ state.total_kos|default:0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Weight Class Statistics -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">⚖️ Weight Class Distribution</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Weight Class</th>
+                                <th>Fighters</th>
+                                <th>Total Wins</th>
+                                <th>KO Ratio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for wc in weight_class_stats %}
+                            <tr>
+                                <td><strong>{{ wc.name }}</strong></td>
+                                <td>{{ wc.fighter_count }}</td>
+                                <td>{{ wc.total_wins|default:0 }}</td>
+                                <td>
+                                    {% if wc.fighter_count > 0 and wc.total_kos %}
+                                        {{ wc.total_kos|default:0 }}/{{ wc.fighter_count }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if champion %}
+<!-- Current Champion -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-warning">
+            <div class="card-body text-center">
+                <h4>👑 Current Champion</h4>
+                <h3 class="mb-1">{{ champion.name }}</h3>
+                <p class="mb-1">{{ champion.record }} ({{ champion.kos }} KOs)</p>
+                <p class="mb-0">{{ champion.state_of_origin }} • {{ champion.weight_class.name }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

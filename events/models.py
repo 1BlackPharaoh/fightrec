@@ -1,12 +1,11 @@
 from django.db import models
-from fighters.models import Fighter, WeightClass, Organization
+from fighters.models import Fighter, WeightClass
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
     date = models.DateField()
     location = models.CharField(max_length=200)
     promoter = models.CharField(max_length=100, blank=True)
-    is_approved = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.name} - {self.date}"
@@ -20,7 +19,6 @@ class Bout(models.Model):
         ('TKO', 'Technical Knockout'),
         ('DQ', 'Disqualification'),
         ('Draw', 'Draw'),
-        ('NC', 'No Contest'),
     ]
     
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='bouts')
@@ -34,12 +32,16 @@ class Bout(models.Model):
     winning_fighter = models.ForeignKey(Fighter, on_delete=models.CASCADE, null=True, blank=True, related_name='wins')
     losing_fighter = models.ForeignKey(Fighter, on_delete=models.CASCADE, null=True, blank=True, related_name='losses')
     round_ended = models.IntegerField(null=True, blank=True)
-    time_ended = models.CharField(max_length=10, blank=True)  # e.g., "2:35"
     is_draw = models.BooleanField(default=False)
     
-    # For title fights
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True)
-    is_title_fight = models.BooleanField(default=False)
-    
     def __str__(self):
-        return f"{self.fighter_a} vs {self.fighter_b}" 
+        return f"{self.fighter_a} vs {self.fighter_b}"
+    
+    def save(self, *args, **kwargs):
+        # Auto-set winning/losing fighters for non-draws
+        if not self.is_draw and self.winning_fighter:
+            if self.winning_fighter == self.fighter_a:
+                self.losing_fighter = self.fighter_b
+            else:
+                self.losing_fighter = self.fighter_a
+        super().save(*args, **kwargs)
